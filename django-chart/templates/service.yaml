@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-django
+
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}-django
+  ports:
+    - port: 80
+      targetPort: {{ .Values.service.port }}
+
+# Пояснення:
+# type — тип сервісу (ми вказали ClusterIP у values.yaml)
+# port — порт, на якому сервіс буде доступний
+# targetPort — порт, на якому працює контейнер з Django

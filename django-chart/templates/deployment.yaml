@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-django
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-django
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-django
+    spec:
+      containers:
+        - name: django
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+
+
+# Пояснення:
+# apiVersion, kind, metadata — стандартна структура
+# Kubernetes-ресурсу.
+
+# .Release.Name — ім’я, яке ви задаєте при встановленні
+# чарта (helm install my-django ./django-chart). Завдяки
+# цьому назви ресурсів будуть унікальними.
+
+# replicas: 1 — кількість подів, які потрібно створити (можна
+# змінити через values.yaml, якщо винести у змінну).
+
+# selector і template.metadata.labels — це механізми, за
+# якими Kubernetes зв’язує Pod із Service.
+
+# containers — список контейнерів у Pod'і.
+
+# .Values.image.repository, .Values.image.tag,
+# .Values.image.pullPolicy — ми підставляємо значення з
+# values.yaml, щоб не хардкодити шлях до образу.
+
+# .Values.service.port — порт, який відкриває Django в
+# контейнері.
+
+# envFrom.configMapRef — дозволяє підключити всі змінні
+# середовища з ConfigMap одразу, без опису кожної окремо.

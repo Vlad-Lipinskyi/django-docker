@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+{{- range $key, $val := .Values.config }}{{ $key }}: {{ $val | quote }}{{-
+end }}
+
+# Пояснення:
+
+# .Release.Name — робить назву ConfigMap унікальною для
+# кожної інсталяції чарта.
+
+# data: — секція, у якій зберігаються змінні середовища у
+# вигляді ключ: значення.
+
+# range — Helm-шаблонізація: перебирає всі пари ключ-
+# значення у values.yaml -> config і вставляє їх у ConfigMap.
+
+# quote — додає лапки навколо значень, щоб уникнути
+# помилок із типами (True → "True").
